@@ -23,7 +23,4 @@ haceFrioF :: Float -> Bool
 haceFrioF x = x < celsiusToFahr 8 
 
 mcm :: Int -> Int -> Int
-mcm x y =  (x * y) `div` mcd x y 
-
-mcd :: Int -> Int -> Int
-mcd x y = 
+mcm x y =  (x * y) `div` gcd x y
