@@ -39,3 +39,44 @@ alterarVelocidad funcion (Auto color velocidad distancia) = Auto color (funcion 
 
 bajarVelocidad :: Int -> Auto -> Auto
 bajarVelocidad disminuir = alterarVelocidad ( max 0 . subtract disminuir)
+
+-- funcion dada
+afectarALosQueCumplen :: (a -> Bool) -> (a -> a) -> [a] -> [a]
+afectarALosQueCumplen criterio efecto lista
+  = (map efecto . filter criterio) lista ++ filter (not.criterio) lista
+
+terremoto :: Auto -> Carrera -> Carrera
+terremoto auto = afectarALosQueCumplen (estaCerca auto) (bajarVelocidad 50)
+
+miguelitos :: Auto -> Int -> Carrera -> Carrera
+miguelitos auto cantidad = afectarALosQueCumplen (leGananA auto) (bajarVelocidad cantidad)
+
+jetpack :: Int -> Auto -> Carrera -> Carrera
+jetpack tiempo auto = afectarALosQueCumplen (esElMismo auto) (restaurarVelocidad . efectoJetpack tiempo)
+
+esElMismo :: Auto -> Auto -> Bool
+esElMismo (Auto color1 _ _) (Auto color2 _ _) = color1 == color2
+
+efectoJetpack :: Int -> Auto -> Auto
+efectoJetpack tiempo auto = correDurante tiempo (alterarVelocidad (*2) auto)
+
+restaurarVelocidad :: Auto -> Auto
+restaurarVelocidad = alterarVelocidad (`div` 2)
+
+simularCarrera :: Carrera -> [Carrera -> Carrera] -> [(Int, Color)]
+simularCarrera carrera eventosCarrera = tablaDePosiciones (aplicarEventos carrera eventosCarrera)
+
+aplicar :: Carrera -> (Carrera ->Carrera) -> Carrera
+aplicar carrera evento = evento carrera
+
+aplicarEventos :: Carrera -> [Carrera ->Carrera] -> Carrera
+aplicarEventos = foldl aplicar
+
+tablaDePosiciones :: Carrera -> [(Int,Color)]
+tablaDePosiciones carrera = map(armarFila carrera) carrera
+
+armarFila :: Carrera -> Auto -> (Int, Color)
+armarFila carrera auto = (puesto auto carrera, colorDe auto)
+
+colorDe :: Auto -> Color
+colorDe (Auto color _ _) = color
