@@ -43,3 +43,17 @@ sinInterrupciones cancion = all esAudible (filter ((> 0.1) . duracion) cancion)
 -- c) 
 peorMomento :: Cancion -> Float 
 peorMomento = maximum . map volumen . filter esMolesta
+
+-- 3)
+type Filtro = Cancion -> Cancion
+
+trasponer :: Float -> Filtro
+trasponer escalar = map (cambiarTono (* escalar))
+
+acotarVolumen :: Float -> Float -> Filtro
+acotarVolumen max min cancion = 
+
+acotar :: Float -> Float -> Float -> Float
+acotar max min volumen 
+    | volumen < min = 
+    | otherwise = 
