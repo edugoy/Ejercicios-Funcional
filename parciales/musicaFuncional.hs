@@ -51,9 +51,23 @@ trasponer :: Float -> Filtro
 trasponer escalar = map (cambiarTono (* escalar))
 
 acotarVolumen :: Float -> Float -> Filtro
-acotarVolumen max min cancion = 
+acotarVolumen min max = map (cambiarVolumen (acotar min max))
 
 acotar :: Float -> Float -> Float -> Float
-acotar max min volumen 
-    | volumen < min = 
-    | otherwise = 
+acotar min max volumen 
+    | volumen < min = min
+    | volumen > max = max
+    | otherwise = volumen
+
+normalizar :: Filtro
+normalizar cancion = map(cambiarVolumen (const (promedio (map volumen cancion)))) cancion
+
+-- 5)
+tunear :: [Filtro] -> Filtro
+tunear filtros cancion = normalizar (aplicarFiltros filtros cancion)
+
+aplicarFiltros :: [Filtro] -> Cancion -> Cancion
+aplicarFiltros filtros cancion = foldl aplicar cancion filtros
+
+aplicar :: Cancion -> Filtro -> Cancion
+aplicar cancion filtro = filtro cancion
